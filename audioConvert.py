@@ -10,8 +10,10 @@ import re
 
 __author__ = 'Henry Borchers'
 line = "--------------------------------------------------"
-DEBUG = True
-
+DEBUG = False
+# TODO: Add argparcer
+# TODO: ADD GUI
+# TODO: Create setup script
 
 ENCODING = 'Encoding'
 IDLE = 'Idle'
@@ -102,7 +104,7 @@ class AudioFactory(threading.Thread):
         source = item['source']
         self.currentFile = source
         destination = item['destination']
-        print "Encoding " + source + " as " + destination
+
         # convert_audio takes a file name as the argument and passes it to LAME.
         # build the command for converting
         flags = "-s 44.1 --noreplaygain".split()
@@ -147,7 +149,7 @@ class AudioFactory(threading.Thread):
         self.current_status = IDLE
 
     def run(self):
-        print "staring thread"
+        # print "staring thread"
         while self.hasTasks:
             self.encode_next()
 #
@@ -159,18 +161,18 @@ def openingBanner():
           "Python 2.7 \n" \
           "ffmpeg \n" \
           "\n" \
-          "Programmed by Henry Borchers"
+          "Programmed by Henry Borchers\n\n"
 
 
 def main():
     openingBanner()
-    derivative_maker = AudioFactory(verbose=False)
+    derivative_maker = AudioFactory(verbose=True)
     input_argument = str(argv[1])
     if path.isdir(input_argument):
         for root, dir, files in walk(input_argument):
             for file in files:
                 if ".wav" in file:
-                    print "Adding \"" + path.join(root, file) + "\" to the queue."
+                    # print "Adding \"" + path.join(root, file) + "\" to the queue."
                     derivative_maker.add_audio_file(path.join(root, file))
     elif path.isfile(input_argument):
             if ".wav" in input_argument:
@@ -184,13 +186,16 @@ def main():
         print("Not a valid file or directory")
 
     # current_queue =         # display_usage("Missing directory or file")
-    for queue in derivative_maker.preview_queues():
-        print queue[0], queue[1]
+    # for queue in derivative_maker.preview_queues():
+    #     print queue[0], queue[1]
 
     # print "\nencoding next\n"
-    # while derivative_maker.hasTasks:
-    #     derivative_maker.encode_next()
-    derivative_maker.start()
+    while derivative_maker.hasTasks:
+        derivative_maker.encode_next()
+        # encode_next
+    # derivative_maker.daemon = True
+    # derivative_maker.start()
+    # derivative_maker.join()
     for queue in derivative_maker.preview_queues():
         print queue[0], queue[1]
 

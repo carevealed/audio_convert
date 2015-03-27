@@ -6,10 +6,11 @@ __version__ = '0.0.1'
 
 # import Queue
 from os import walk
+import os
 from sys import argv
 import argparse
 # sys.path.insert(0, os.path.abspath('..'))
-from source.audio_convert.scripts.modules.Audio_factory import *
+from modules.Audio_factory import AudioFactory
 
 
 line = "--------------------------------------------------"
@@ -65,22 +66,6 @@ def main():
     for queue in derivative_maker.preview_queues():
         print queue[0], queue[1]
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input", help="File or folder name", nargs='?', default="", type=str)
-    parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the graphical user interface.", action='store_true')
-    ars = parser.parse_args()
-    openingBanner()
-    if ars.gui:
-        print "Starting graphical user interface!"
-        # sys.path.insert(0, os.path.abspath('..'))
-        from source.audio_convert.scripts.gui import gui
-
-        gui.startup()
-    elif ars.input == "":
-        parser.print_help()
-    else:
-        main()
 
 
 def installed_start():
@@ -92,9 +77,17 @@ def installed_start():
     if ars.gui:
         print "Starting graphical user interface!"
         # sys.path.insert(0, os.path.abspath('..'))
-        from source.audio_convert.scripts.gui import gui
-        gui.startup()
+        from gui import gui
+        if ars.input:
+            gui.startup(ars.input)
+        else:
+            gui.startup()
+
     elif ars.input == "":
         parser.print_help()
     else:
         main()
+
+if __name__ == '__main__':
+
+   installed_start()

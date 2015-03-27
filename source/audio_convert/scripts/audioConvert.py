@@ -74,7 +74,7 @@ if __name__ == '__main__':
     if ars.gui:
         print "Starting graphical user interface!"
         # sys.path.insert(0, os.path.abspath('..'))
-        from source.audio_convert.scripts import gui
+        from source.audio_convert.scripts.gui import gui
 
         gui.startup()
     elif ars.input == "":

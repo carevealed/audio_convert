@@ -1,3 +1,6 @@
+import collections
+from sys import stdout
+
 __author__ = 'California Audio Visual Preservation Project'
 __name__ = 'Audio_factory'
 __version__ = '0.0.1'
@@ -177,28 +180,40 @@ class AudioFactory(threading.Thread):
         command.append(destination)
 
         if self.verbose:
-            lame = Popen(command, stdout=PIPE)
+            lame = Popen(command)
         else:
-            lame = Popen(command, stdout=PIPE, stderr=PIPE)
-            while True:
-                data = lame.stderr.readline()
-                if data == "":
-                    break
-
-                raw_percentage = re.findall(PERCENT_RE, data)
+            lame = Popen(command, stderr=PIPE, universal_newlines=True)
+            lame.stderr.flush()
+            lines = collections.deque(maxlen=1)
+            t = threading.Thread(target=self.read_output, args=(lame, lines.append))
+            t.daemon = True
+            t.start()
+            sleep(1)
+            while lame.poll() == None:
+                line = lines[0]
+                # print "\r" + line.rstrip(),
+                raw_percentage = re.findall(PERCENT_RE, line)
                 if raw_percentage:
                     percentage = int(raw_percentage[0][0])
                     self.status_percentage = percentage
-                # print "\r" + str(self.status_percentage) + "%",
-                # print data
-                # print lame.poll()
-                sleep(.1)
+                    # print "\r" + str(self.status_percentage) + "%",
+                    # print data
+                    # print lame.poll()
+                    # print "got here"
+                sleep(.01)
 
+            t.join()
 
         # force the program to wait until file is converted
         lame.communicate()
         self.currentFile = ""
         self.current_status = IDLE
+
+
+    def read_output(self, process, append):
+        while process.stderr.readline != "" and process.poll() is None:
+            line = process.stderr.readline()
+            append(line)
 
     def run(self):
         # print "staring thread"

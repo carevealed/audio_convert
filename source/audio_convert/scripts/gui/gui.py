@@ -10,19 +10,22 @@ __license__ = 'TBD'
 from Tkinter import *
 import ttk
 # sys.path.insert(0, os.path.abspath('..'))
-from source.audio_convert.scripts.modules.Audio_factory import *
+from modules.Audio_factory import AudioFactory
+import threading
+import os
 IDLE = 0
 WORKING = 1
 
 
 
 class MainWindow(object):
-    def __init__(self, master):
+    def __init__(self, master, input_file=None):
         self.master = master
         self.background = ttk.Frame(self.master, padding=(10,10))
         self.background.pack(fill=BOTH, expand=True)
         self.mp3_engine = AudioFactory(verbose=False)
         self.status = IDLE
+
 
 
         #---------------- Menus ----------------
@@ -108,6 +111,11 @@ class MainWindow(object):
         self.statusBar = Label(self.master, text="Status: Idle", bd=1, relief=SUNKEN, anchor=W)
         self.statusBar.pack(side=BOTTOM, fill=X)
 
+    # --------------------  post gui Load --------------------
+        if input_file is not None:
+            self.load_folder(input_file)
+            self.flush_tree()
+
     def set_status(self, new_status):
         self.statusBar.config(text="Status: " +new_status)
 
@@ -118,8 +126,7 @@ class MainWindow(object):
         self.flush_tree()
 
 
-    def add_folder(self):
-        new_folder = askdirectory()
+    def load_folder(self, new_folder):
         if new_folder:
             # print "Adding folder: " + str(new_folder)
             for root, dir, files in os.walk(new_folder):
@@ -127,6 +134,10 @@ class MainWindow(object):
                     if ".wav" in file:
                         # print "Adding \"" + path.join(root, file) + "\" to the queue."
                         self.mp3_engine.add_audio_file(os.path.join(root, file))
+
+    def add_folder(self):
+        new_folder = askdirectory()
+        self.load_folder(new_folder)
         self.flush_tree()
 
     def start_encoding(self):
@@ -235,9 +246,12 @@ class AboutWindow():
 
 # class communicator(threading.Thread):
 #     def __init__(self):
-def startup():
+def startup(input_file = None):
     root = Tk()
-    app = MainWindow(root)
+    if input_file:
+        app = MainWindow(root, input_file)
+    else:
+        app = MainWindow(root)
     root.mainloop()
 
 

@@ -304,9 +304,13 @@ class MainWindow(object):
                 size = str(size) + " MB"
             self.tree_files.insert('', i, source)
             self.tree_files.set(source, 'status', status)
+            self.master.after(10)
             self.tree_files.set(source, 'size', size)
+            self.master.after(10)
             self.tree_files.set(source, 'source', source)
+            self.master.after(10)
             self.tree_files.set(source, 'destination', destination)
+
         self.master.after(20)
 
 

@@ -1,9 +1,10 @@
 import collections
 from sys import stdout
+from os.path import isfile
 
 __author__ = 'California Audio Visual Preservation Project'
 __name__ = 'Audio_factory'
-__version__ = '0.0.1'
+__version__ = '0.0.5'
 
 from subprocess import Popen
 from subprocess import PIPE
@@ -17,6 +18,7 @@ import Queue
 
 ENCODING = 'Encoding'
 IDLE = 'Idle'
+HALTING = 'Halting'
 PERCENT_RE = re.compile("(([0-90]?[0-9])|(100))%")
 ETA_RE = re.compile("[0-9]?[0-9]:[0-9]?[0-9](?=(\s))")
 
@@ -28,6 +30,7 @@ class AudioFactory(threading.Thread):
     The audioFactory class is managing and implementing the converting of wav files to mp3.
      It has the ability add to queues and run as a standalone single thread.
     """
+    data_lock = threading.Lock()
     def __init__(self, verbose=False):
         """
 
@@ -35,14 +38,16 @@ class AudioFactory(threading.Thread):
         :return:
         """
         threading.Thread.__init__(self)
+
         self.verbose = verbose
         self._queue = Queue.Queue()
+        self._jobs = []
         self.currentFile = ""
-        self.current_status = ""
+        self.current_status = IDLE
         self.status_part = 0
         self.status_total = 0
         self.status_percentage = 0
-        self.data_lock = threading.Lock()
+
 
 
     @property
@@ -61,6 +66,47 @@ class AudioFactory(threading.Thread):
         """
         return self.status_percentage
 
+    @property
+    def jobs(self):
+        return self._jobs
+
+    def set_status(self, export_name, status):
+
+        temp = []
+        for job in self._jobs:
+            if job['destination'] == export_name:
+                job['status'] = status
+                temp.append(job)
+            else:
+                temp.append(job)
+        self._jobs = temp
+
+    def get_status(self, source_name):
+        for job in self._jobs:
+            if job['source'] == source_name:
+                return job['status']
+
+    def change_output_name(self, source, new_destination):
+        if os.path.splitext(new_destination)[1] != ".mp3":
+            raise ValueError("Not a file")
+        with self.data_lock:
+            replacement_q = Queue.Queue()
+            while not self._queue.empty():
+                temp = self._queue.get()
+                if temp['source'] == source:
+                    temp['destination'] = new_destination
+                replacement_q.put(temp)
+            self._queue = replacement_q
+
+            replacement_jobs = []
+            for job in self._jobs:
+                if job['source'] == source:
+                    job['destination'] = new_destination
+                replacement_jobs.append(job)
+            self._jobs = replacement_jobs
+        for job in self._jobs:
+            print job
+
     def add_audio_file(self, source_file, destination_file=None):
         """
 
@@ -69,13 +115,22 @@ class AudioFactory(threading.Thread):
         """
         if destination_file is None:
             base, exention = os.path.splitext(os.path.basename(source_file))
+
+            # Checks and Prevents you from adding the same file with the same destination
+            queues = self.preview_queues()
+            for queue in queues:
+                if queue[1]['source'] == source_file:
+                    if queue[1]['destination'] == os.path.join(os.path.dirname(source_file), (base + ".mp3")):
+                        raise RuntimeError("You cannot add a file already in the queue.")
             if DEBUG:
                 destination_file = os.path.join("/Users/lpsdesk/PycharmProjects/audio_convert", (base + ".mp3"))
             else:
                 destination_file = os.path.join(os.path.dirname(source_file), (base + ".mp3"))
         with self.data_lock:
-            new_queue = dict({'source': source_file, 'destination': destination_file})
+            # print source_file
+            new_queue = dict({'source': source_file, 'destination': destination_file, 'status': "Queued"})
             self._queue.put(new_queue)
+            self._jobs.append(new_queue)
             self.status_total += 1
 
     def remove_audio_file(self, source_file):
@@ -90,8 +145,17 @@ class AudioFactory(threading.Thread):
                 temp = self._queue.get()
                 if temp['source'] == source_file:
                     continue
-                replacement_q.put(temp)
+                else:
+                    replacement_q.put(temp)
             self._queue = replacement_q
+
+            replacement_jobs = []
+            for job in self._jobs:
+                if job['source'] == source_file:
+                    continue
+                else:
+                    replacement_jobs.append(job)
+            self._jobs = replacement_jobs
             self.status_total -= 1
 
     def preview_queues(self):
@@ -154,6 +218,14 @@ class AudioFactory(threading.Thread):
         """
         pass
 
+    def kill_encoding(self):
+        # print "killing"
+        with self.data_lock:
+            self.current_status = HALTING
+            self.lame.kill()
+            while self.lame.poll() is None:
+                sleep(1)
+
     def _encode(self, item):
         self.current_status = ENCODING
         source = item['source']
@@ -178,18 +250,20 @@ class AudioFactory(threading.Thread):
         command.append(source)
         command = command + flags
         command.append(destination)
-
+        with self.data_lock:
+            self.set_status(item['destination'], "Encoding")
+        # print item['destination']
         if self.verbose:
-            lame = Popen(command)
+            self.lame = Popen(command)
         else:
-            lame = Popen(command, stderr=PIPE, universal_newlines=True)
-            lame.stderr.flush()
+            self.lame = Popen(command, stderr=PIPE, universal_newlines=True)
+            self.lame.stderr.flush()
             lines = collections.deque(maxlen=1)
-            t = threading.Thread(target=self.read_output, args=(lame, lines.append))
+            t = threading.Thread(target=self.read_output, args=(self.lame, lines.append))
             t.daemon = True
             t.start()
             sleep(1)
-            while lame.poll() == None:
+            while self.lame.poll() == None:
                 line = lines[0]
                 # print "\r" + line.rstrip(),
                 raw_percentage = re.findall(PERCENT_RE, line)
@@ -205,9 +279,15 @@ class AudioFactory(threading.Thread):
             t.join()
 
         # force the program to wait until file is converted
-        lame.communicate()
-        self.currentFile = ""
-        self.current_status = IDLE
+        self.lame.communicate()
+        if self.current_status != HALTING:
+            with self.data_lock:
+                self.set_status(item['destination'], "Done")
+                self.currentFile = ""
+                self.current_status = IDLE
+        else:
+            with self.data_lock:
+                self.set_status(item['destination'], "Aborted")
 
 
     def read_output(self, process, append):
@@ -222,5 +302,9 @@ class AudioFactory(threading.Thread):
         :return:
         """
         while self.hasTasks:
-            self.encode_next()
-#
+
+            if self.current_status == HALTING:
+                self.current_status = IDLE
+                break
+            else:
+                self.encode_next()

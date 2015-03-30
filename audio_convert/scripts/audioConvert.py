@@ -2,15 +2,15 @@
 
 __title__ = 'Audio Convert'
 __author__ = 'Henry Borchers'
-__version__ = '0.0.1'
+__version__ = '0.1.1'
+__license__ = 'GPL'
 
 # import Queue
 from os import walk
 import os
-from sys import argv
 import argparse
 # sys.path.insert(0, os.path.abspath('..'))
-from modules.Audio_factory import AudioFactory
+from audio_convert.scripts.modules.Audio_factory import AudioFactory
 
 
 line = "--------------------------------------------------"
@@ -24,16 +24,17 @@ def openingBanner():
     print "Audio converter script for CAVPP. \n" \
           "Dependencies: \n" \
           "Python 2.7 \n" \
+          "OneSheet \n" \
           "ffmpeg \n" \
+          "LAME \n" \
           "\n" \
           "Programmed by Henry Borchers\n"
 
 
-def main():
-
+def main(input_argument):
 
     derivative_maker = AudioFactory(verbose=True)
-    input_argument = str(argv[1])
+    # input_argument = str(argv[1])
 
     if os.path.isdir(input_argument):
         for root, dir, files in walk(input_argument):
@@ -41,6 +42,7 @@ def main():
                 if ".wav" in file:
                     # print "Adding \"" + path.join(root, file) + "\" to the queue."
                     derivative_maker.add_audio_file(os.path.join(root, file))
+                    print "found one"
     elif os.path.isfile(input_argument):
             if ".wav" in input_argument:
                 print "Converting: " + os.path.join(input_argument)
@@ -77,16 +79,18 @@ def installed_start():
     if ars.gui:
         print "Starting graphical user interface!"
         # sys.path.insert(0, os.path.abspath('..'))
-        from gui import gui
+        from gui.gui import startup
+
         if ars.input:
-            gui.startup(ars.input)
+            startup(ars.input)
         else:
-            gui.startup()
+            startup()
 
     elif ars.input == "":
         parser.print_help()
     else:
-        main()
+        main(ars.input)
+        # print ars.input
 
 if __name__ == '__main__':
 

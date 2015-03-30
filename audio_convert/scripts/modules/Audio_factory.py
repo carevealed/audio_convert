@@ -16,9 +16,7 @@ import threading
 import Queue
 
 
-ENCODING = 'Encoding'
-IDLE = 'Idle'
-HALTING = 'Halting'
+
 PERCENT_RE = re.compile("(([0-90]?[0-9])|(100))%")
 ETA_RE = re.compile("[0-9]?[0-9]:[0-9]?[0-9](?=(\s))")
 
@@ -31,6 +29,9 @@ class AudioFactory(threading.Thread):
      It has the ability add to queues and run as a standalone single thread.
     """
     data_lock = threading.Lock()
+    ENCODING = 'Encoding'
+    IDLE = 'Idle'
+    HALTING = 'Halting'
     def __init__(self, verbose=False):
         """
 
@@ -43,12 +44,14 @@ class AudioFactory(threading.Thread):
         self._queue = Queue.Queue()
         self._jobs = []
         self.currentFile = ""
-        self.current_status = IDLE
+        self._current_status = self.IDLE
         self.status_part = 0
         self.status_total = 0
         self.status_percentage = 0
 
-
+    @property
+    def current_status(self):
+        return self._current_status
 
     @property
     def hasTasks(self):
@@ -68,6 +71,10 @@ class AudioFactory(threading.Thread):
 
     @property
     def jobs(self):
+        """
+
+        :return: list
+        """
         return self._jobs
 
     def set_status(self, export_name, status):
@@ -87,6 +94,12 @@ class AudioFactory(threading.Thread):
                 return job['status']
 
     def change_output_name(self, source, new_destination):
+        """
+
+        :param source:              The source file name as a string
+        :param new_destination:     The new filename as a string
+        :return:
+        """
         if os.path.splitext(new_destination)[1] != ".mp3":
             raise ValueError("Not a file")
         with self.data_lock:
@@ -176,6 +189,10 @@ class AudioFactory(threading.Thread):
         return return_q
 
     def encode_next(self):
+        """
+        Encodes the next item in the jobs and the queue
+        :return:
+        """
 
         if not self._queue.empty():
             self._encode(self._queue.get())
@@ -210,24 +227,17 @@ class AudioFactory(threading.Thread):
             raise ValueError(source_file + "not found in queue")
 
 
-    def remove_from_queue(self, source_file):
-        """
-        NOT IMPLEMENTED YET
-        :param source_file:
-        :return:
-        """
-        pass
 
     def kill_encoding(self):
         # print "killing"
         with self.data_lock:
-            self.current_status = HALTING
+            self._current_status = self.HALTING
             self.lame.kill()
             while self.lame.poll() is None:
                 sleep(1)
 
     def _encode(self, item):
-        self.current_status = ENCODING
+        self._current_status = self.ENCODING
         source = item['source']
         self.currentFile = source
         destination = item['destination']
@@ -258,15 +268,17 @@ class AudioFactory(threading.Thread):
         else:
             self.lame = Popen(command, stderr=PIPE, universal_newlines=True)
             self.lame.stderr.flush()
-            lines = collections.deque(maxlen=1)
+            lines = collections.deque(maxlen=3)
             t = threading.Thread(target=self.read_output, args=(self.lame, lines.append))
             t.daemon = True
             t.start()
             sleep(1)
-            while self.lame.poll() == None:
+            while self.lame.poll() is None:
                 line = lines[0]
                 # print "\r" + line.rstrip(),
                 raw_percentage = re.findall(PERCENT_RE, line)
+                if DEBUG:
+                    print line
                 if raw_percentage:
                     percentage = int(raw_percentage[0][0])
                     self.status_percentage = percentage
@@ -280,11 +292,11 @@ class AudioFactory(threading.Thread):
 
         # force the program to wait until file is converted
         self.lame.communicate()
-        if self.current_status != HALTING:
+        if self._current_status != self.HALTING:
             with self.data_lock:
                 self.set_status(item['destination'], "Done")
                 self.currentFile = ""
-                self.current_status = IDLE
+                self._current_status = self.IDLE
         else:
             with self.data_lock:
                 self.set_status(item['destination'], "Aborted")
@@ -295,6 +307,14 @@ class AudioFactory(threading.Thread):
             line = process.stderr.readline()
             append(line)
 
+    def clear_all(self):
+        with self.data_lock:
+            self._queue = Queue.Queue()
+            self._jobs = []
+            self.status_part = 0
+            self.status_total = 0
+            self.status_percentage = 0
+
     def run(self):
         # print "staring thread"
         """
@@ -303,8 +323,8 @@ class AudioFactory(threading.Thread):
         """
         while self.hasTasks:
 
-            if self.current_status == HALTING:
-                self.current_status = IDLE
+            if self._current_status == self.HALTING:
+                self._current_status = self.IDLE
                 break
             else:
                 self.encode_next()

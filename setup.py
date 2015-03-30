@@ -4,8 +4,6 @@ setup(
     name='CAVPP_Audio_Convert',
     version='0.1.1',
     packages=find_packages(),
-    # packages=['audio_convert', 'audio_convert.scripts', 'audio_convert.scripts.gui',
-    #           'audio_convert.scripts.modules'],
     url='https://github.com/cavpp/audio_convert',
     install_requires=['OneSheet == 0.1.3.26'],
     license='GPL',

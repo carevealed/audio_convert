@@ -10,7 +10,7 @@ To Install
 1. Download the latest version. 
 2. In a terminal window, type:
 
-    pip install CAVPP_Audio_Convert-0.1.1.tar.gz
+        pip install CAVPP_Audio_Convert-0.1.1.tar.gz
 
 To Use:
 =======

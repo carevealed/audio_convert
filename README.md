@@ -5,17 +5,15 @@ Description
 ===========
 Converts wav audio files to mp3 CAVPP standards.
 
-Author: Henry Borchers 
-
 To Install
 ==========
-1. Download the latest version. 
+1. Download the latest version in the dist folder
 2. In a terminal window, type:
 
         pip install CAVPP_Audio_Convert-0.1.1.tar.gz
 
-To Use:
-=======
+To Use
+======
 
 To use with the command line:
 -----------------------------
@@ -37,3 +35,7 @@ To use the graphical user interface:
 In a terminal windows, simple type the following command::
   
       makemp3 -g
+
+Credits
+=======
+Author: Henry Borchers 

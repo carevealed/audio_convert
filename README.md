@@ -32,6 +32,6 @@ In a terminal, simply type "makemp3" followed by a single file or directory.
   
 To use the graphical user interface:
 ------------------------------------
-    In a terminal windows, simple type the following command::
+In a terminal windows, simple type the following command::
   
       makemp3 -g

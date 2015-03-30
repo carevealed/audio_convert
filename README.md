@@ -16,18 +16,22 @@ To Use:
 =======
 
 To use with the command line:
+-----------------------------
 In a terminal, simply type "makemp3" followed by a single file or directory.
     
-Example 1: Single wav file.
+### Example 1: Single wav file.
+
     
         makemp3 /Users/lpsdesk/PycharmProjects/audioConvert/OtherFolder/ALLEY_B.wav
             
-Example 2: Entire folder of wav files.
+### Example 2: Entire folder of wav files.
+
 
         makemp3 /Users/lpsdesk/PycharmProjects/audioConvert/testFolder
   
   
-  To use the graphical user interface:
+To use the graphical user interface:
+------------------------------------
     In a terminal windows, simple type the following command::
   
       makemp3 -g

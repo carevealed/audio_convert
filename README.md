@@ -3,7 +3,8 @@ CAVPP Audio Conversion script
 
 Description
 ===========
-Converts audio files to CAVPP standards
+Converts wav audio files to mp3 CAVPP standards.
+Author: Henry Borchers 
 
 To Install
 ==========

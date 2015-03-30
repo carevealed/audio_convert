@@ -7,7 +7,8 @@ Converts audio files to CAVPP standards
 
 To Install
 ==========
-Download the latest version. In a terminal window, type:
+1. Download the latest version. 
+2. In a terminal window, type:
 
     pip install CAVPP_Audio_Convert-0.1.1.tar.gz
 

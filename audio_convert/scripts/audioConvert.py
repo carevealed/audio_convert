@@ -1,4 +1,5 @@
 #!/usr/local/bin/python
+import sys
 
 __title__ = 'Audio Convert'
 __author__ = 'Henry Borchers'
@@ -42,17 +43,17 @@ def main(input_argument):
                 if ".wav" in file:
                     # print "Adding \"" + path.join(root, file) + "\" to the queue."
                     derivative_maker.add_audio_file(os.path.join(root, file))
-                    print "found one"
+                    # print "found one"
     elif os.path.isfile(input_argument):
             if ".wav" in input_argument:
                 print "Converting: " + os.path.join(input_argument)
                 derivative_maker.add_audio_file(input_argument)
             else:
                 # display_usage("This program only works with .wav files.")
-                print("This program only works with .wav files.")
+                sys.stderr.write("This program only works with .wav files.")
     else:
         # display_usage("Not a valid file or directory")
-        print("Not a valid file or directory")
+        sys.stderr.write("Not a valid file or directory")
 
     # current_queue =         # display_usage("Missing directory or file")
     # for queue in derivative_maker.preview_queues():

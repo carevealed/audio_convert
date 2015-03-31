@@ -4,7 +4,7 @@ from os.path import isfile
 
 __author__ = 'California Audio Visual Preservation Project'
 __name__ = 'Audio_factory'
-__version__ = '0.0.5'
+__version__ = '0.1.0'
 
 from subprocess import Popen
 from subprocess import PIPE
@@ -128,6 +128,8 @@ class AudioFactory(threading.Thread):
         """
         if destination_file is None:
             base, exention = os.path.splitext(os.path.basename(source_file))
+            if "_prsv" in base:
+                base = base.split("_prsv")[0]+"_access"
 
             # Checks and Prevents you from adding the same file with the same destination
             queues = self.preview_queues()
@@ -244,7 +246,7 @@ class AudioFactory(threading.Thread):
 
         # convert_audio takes a file name as the argument and passes it to LAME.
         # build the command for converting
-        flags = "-s 44.1 --noreplaygain".split()
+        flags = "--resample 44.1 --noreplaygain".split()
         file = AudioObject(source)
         # Mono
         if file.audioChannels == 1:

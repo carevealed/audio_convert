@@ -13,6 +13,8 @@ To Install
         cd Downloads
         sudo pip install CAVPP_Audio_Convert-0.1.1.tar.gz
 
+Enter your computer password and it will install the program as well as the dependencies. 
+
 **Note:** If you have a problem that pip isn't installed, you can install it with 
  the following command.
  

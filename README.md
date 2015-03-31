@@ -7,10 +7,17 @@ Converts wav audio files to mp3 CAVPP standards.
 
 To Install
 ==========
-1. Download the latest version in the dist folder
+1. Download the latest version in the dist folder to your Download folder
 2. In a terminal window, type:
 
-        pip install CAVPP_Audio_Convert-0.1.1.tar.gz
+        cd Downloads
+        sudo pip install CAVPP_Audio_Convert-0.1.1.tar.gz
+
+**Note:** If you have a problem that pip isn't installed, you can install it with 
+ the following command.
+ 
+        sudo easy_install pip
+
 
 To Use
 ======

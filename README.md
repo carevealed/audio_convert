@@ -11,8 +11,8 @@ To Install
 You have two options:
 
 
-Standard
---------
+Option 1: Standard
+------------------
 
 1. Open a terminal window and type:
 
@@ -24,8 +24,8 @@ Standard
 2. Enter your computer password and the script will install along with all the dependencies.
 
 
-pip
----
+Option 2: pip
+-------------
 
 1. Download the latest version in the dist folder to your Download folder
 2. In a terminal window, type:

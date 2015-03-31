@@ -18,6 +18,9 @@ To Use
 To use with the command line:
 -----------------------------
 In a terminal, simply type "makemp3" followed by a single file or directory.
+
+**Note:** This will save the mp3 files to the same folder location as the wav 
+files they are converting from.
     
 ### Example 1: Single wav file.
 

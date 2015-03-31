@@ -3,11 +3,11 @@ from platform import system
 from time import sleep
 from tkFileDialog import askopenfilename, askdirectory, asksaveasfilename
 from tkMessageBox import showerror, askyesno, showinfo
-
+__title__ = 'CAVPP Audio Converter GUI'
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __license__ = 'GPL'
 DEBUG = False
 
@@ -57,7 +57,7 @@ class MainWindow(object):
         self.frame_title = ttk.Frame(self.background, padding=(10,5))
         self.frame_title.pack()
         self.title = ttk.Label(self.frame_title,
-                               text="CAVPP Audio Converter",
+                               text=__title__,
                                font=('TkDefaultFont', 30, 'bold'))
         self.title.pack()
 
@@ -434,7 +434,7 @@ class AboutWindow():
 # ----------------- Title
         self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
         self.titleFrame.pack()
-        self.titleLabel = ttk.Label(self.titleFrame, text="CAVPP Audio Converter")
+        self.titleLabel = ttk.Label(self.titleFrame, text=__title__)
         self.titleLabel.pack()
         self.versionLabel = ttk.Label(self.titleFrame, text="Version: " + __version__)
         self.versionLabel.pack()
@@ -468,7 +468,7 @@ class AboutWindow():
 #     def __init__(self):
 def startup(input_file = None):
     root = Tk()
-    root.wm_title("CAVPP Audio Derivative Maker")
+    root.wm_title(__title__)
     root.minsize(500, 500)
 
     if input_file:

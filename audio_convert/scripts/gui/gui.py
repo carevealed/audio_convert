@@ -1,7 +1,7 @@
 from collections import deque
 from platform import system
 from time import sleep
-from tkFileDialog import askopenfilename, askdirectory, asksaveasfilename
+from tkFileDialog import askdirectory, asksaveasfilename, askopenfilenames
 from tkMessageBox import showerror, askyesno, showinfo
 __title__ = 'CAVPP Audio Converter GUI'
 __author__ = 'California Audio Visual Preservation Project'
@@ -220,12 +220,13 @@ class MainWindow(object):
 
 
     def add_file(self):
-        new_file = askopenfilename(filetypes=[("Wave", "*.wav")])
-        if new_file:
-            try:
-                self.mp3_engine.add_audio_file(new_file)
-            except RuntimeError:
-                showerror("Import Error", new_file + " is already in your queue.")
+        new_files = askopenfilenames(filetypes=[("Wave", "*.wav")])
+        if new_files:
+            for new_file in new_files:
+                try:
+                    self.mp3_engine.add_audio_file(new_file)
+                except RuntimeError:
+                    showerror("Import Error", new_file + " is already in your queue.")
 
         self.flush_tree()
 

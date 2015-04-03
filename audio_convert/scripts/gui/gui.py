@@ -7,7 +7,7 @@ __title__ = 'CAVPP Audio Converter GUI'
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __license__ = 'GPL'
 DEBUG = False
 
@@ -435,7 +435,9 @@ class AboutWindow():
 # ----------------- Title
         self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
         self.titleFrame.pack()
-        self.titleLabel = ttk.Label(self.titleFrame, text=__title__)
+        print
+        self.logo = PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif'))
+        self.titleLabel = ttk.Label(self.titleFrame, text=__title__, image=self.logo, compound=TOP)
         self.titleLabel.pack()
         self.versionLabel = ttk.Label(self.titleFrame, text="Version: " + __version__)
         self.versionLabel.pack()

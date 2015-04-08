@@ -11,5 +11,6 @@ setup(
     author_email='hborcher@berkeley.edu',
     description='Converts wav files into MP3 files according to CAVPP standards.',
     entry_points={'console_scripts' : ['makemp3 = audio_convert.scripts.audioConvert:installed_start']},
+    include_package_data=True,
     package_data={"": ['audio_convert/scripts/gui/images/CAVPPcolor.gif']}
 )

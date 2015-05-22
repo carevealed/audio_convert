@@ -3,11 +3,12 @@ from platform import system
 from time import sleep
 from tkFileDialog import askdirectory, asksaveasfilename, askopenfilenames
 from tkMessageBox import showerror, askyesno, showinfo
+import sys
 __title__ = 'CAVPP Audio Converter GUI'
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
-__version__ = '0.1.3'
+__version__ = '0.1.7'
 __license__ = 'GPL'
 DEBUG = False
 
@@ -367,9 +368,9 @@ class MainWindow(object):
                 while self.mp3_engine.current_status != self.mp3_engine.IDLE:
                     sleep(.1)
                 showinfo("OK", "Job stopped.\nQuiting program.")
-                quit()
+                self.master.destroy()
         else:
-            quit()
+            self.master.destroy()
     def update_progress_data(self, percentage, part, total):
         self.pbar_progress_total.config(maximum=total, value=part)
         self.pbar_progress_current.config(value=percentage)

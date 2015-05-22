@@ -11,7 +11,7 @@ from os import walk
 import os
 import argparse
 # sys.path.insert(0, os.path.abspath('..'))
-from audio_convert.scripts.modules.Audio_factory import AudioFactory
+from modules.Audio_factory import AudioFactory
 
 
 line = "--------------------------------------------------"
@@ -75,22 +75,22 @@ def installed_start():
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="File or folder name", nargs='?', default="", type=str)
     parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the graphical user interface.", action='store_true')
-    ars = parser.parse_args()
+    args = parser.parse_args()
     openingBanner()
-    if ars.gui:
+    if args.gui:
         print "Starting graphical user interface!"
         # sys.path.insert(0, os.path.abspath('..'))
         from gui.gui import startup
 
-        if ars.input:
-            startup(ars.input)
+        if args.input:
+            startup(args.input)
         else:
             startup()
 
-    elif ars.input == "":
+    elif args.input == "":
         parser.print_help()
     else:
-        main(ars.input)
+        main(args.input)
         # print ars.input
 
 if __name__ == '__main__':

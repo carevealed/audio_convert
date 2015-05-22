@@ -1,0 +1,3 @@
+[console_scripts]
+makemp3 = audio_convert.scripts.audioConvert:installed_start
+

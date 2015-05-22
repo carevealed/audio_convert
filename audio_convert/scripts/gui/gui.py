@@ -8,7 +8,7 @@ __title__ = 'CAVPP Audio Converter GUI'
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
 __credits__ = ["Henry Borchers"]
-__version__ = '0.1.9'
+__version__ = '0.1.10'
 __license__ = 'GPL'
 DEBUG = False
 

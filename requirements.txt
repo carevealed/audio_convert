@@ -1,1 +1,2 @@
 OneSheet >= 0.1.3.26
+git+git://github.com/cavpp/audio_convert.git@master#egg=audio_convert

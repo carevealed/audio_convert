@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: CAVPP-Audio-Convert
-Version: 0.1.6
+Version: 0.1.7
 Summary: Converts wav files into MP3 files according to CAVPP standards.
 Home-page: https://github.com/cavpp/audio_convert
 Author: Henry Borchers

@@ -7,5 +7,3 @@ Modules
     :toctree:
 
     AudioFactory
-
-.. autofunction:: AudioFactory.add_audio_file

@@ -10,10 +10,14 @@ from subprocess import Popen
 from subprocess import PIPE
 from time import sleep
 import os
+import sys
 import re
 from onesheet.AudioObject import *
 import threading
-import Queue
+if sys.version_info >= (3, 0):
+    import queue
+else:
+    import Queue as queue
 
 
 
@@ -35,13 +39,13 @@ class AudioFactory(threading.Thread):
     def __init__(self, verbose=False):
         """
 
-        :param verbose: setting this to True makes LAME's progress data print to the console.
+        :param verbose: setting this to True makes LAME's progress data print(to the console.
         :return:
         """
         threading.Thread.__init__(self)
 
         self.verbose = verbose
-        self._queue = Queue.Queue()
+        self._queue = queue.Queue()
         self._jobs = []
         self.currentFile = ""
         self._current_status = self.IDLE
@@ -103,7 +107,7 @@ class AudioFactory(threading.Thread):
         if os.path.splitext(new_destination)[1] != ".mp3":
             raise ValueError("Not a file")
         with self.data_lock:
-            replacement_q = Queue.Queue()
+            replacement_q = queue.Queue()
             while not self._queue.empty():
                 temp = self._queue.get()
                 if temp['source'] == source:
@@ -118,7 +122,7 @@ class AudioFactory(threading.Thread):
                 replacement_jobs.append(job)
             self._jobs = replacement_jobs
         for job in self._jobs:
-            print job
+            print(job)
 
     def add_audio_file(self, source_file, destination_file=None):
         """
@@ -142,7 +146,7 @@ class AudioFactory(threading.Thread):
             else:
                 destination_file = os.path.join(os.path.dirname(source_file), (base + ".mp3"))
         with self.data_lock:
-            # print source_file
+            # print(source_file
             new_queue = dict({'source': source_file, 'destination': destination_file, 'status': "Queued"})
             self._queue.put(new_queue)
             self._jobs.append(new_queue)
@@ -155,7 +159,7 @@ class AudioFactory(threading.Thread):
         :return:
         """
         with self.data_lock:
-            replacement_q = Queue.Queue()
+            replacement_q = queue.Queue()
             while not self._queue.empty():
                 temp = self._queue.get()
                 if temp['source'] == source_file:
@@ -178,7 +182,7 @@ class AudioFactory(threading.Thread):
 
         :return: a list[queue number, dict({'source', 'destination'})
         """
-        replacement_q = Queue.Queue()
+        replacement_q = queue.Queue()
         return_q = []
         i = 0
         with self.data_lock:
@@ -212,7 +216,7 @@ class AudioFactory(threading.Thread):
         :return:
         """
         with self.data_lock:
-            replacement_q = Queue.Queue()
+            replacement_q = queue.Queue()
             encode_me = None
             while not self._queue.empty():
                 temp = self._queue.get()
@@ -231,7 +235,7 @@ class AudioFactory(threading.Thread):
 
 
     def kill_encoding(self):
-        # print "killing"
+        # print("killing"
         with self.data_lock:
             self._current_status = self.HALTING
             self.lame.kill()
@@ -264,7 +268,7 @@ class AudioFactory(threading.Thread):
         command.append(destination)
         with self.data_lock:
             self.set_status(item['destination'], "Encoding")
-        # print item['destination']
+        # print(item['destination']
         if self.verbose:
             self.lame = Popen(command)
         else:
@@ -277,17 +281,17 @@ class AudioFactory(threading.Thread):
             sleep(1)
             while self.lame.poll() is None:
                 line = lines[0]
-                # print "\r" + line.rstrip(),
+                # print("\r" + line.rstrip(),
                 raw_percentage = re.findall(PERCENT_RE, line)
                 if DEBUG:
-                    print line
+                    print(line)
                 if raw_percentage:
                     percentage = int(raw_percentage[0][0])
                     self.status_percentage = percentage
-                    # print "\r" + str(self.status_percentage) + "%",
-                    # print data
-                    # print lame.poll()
-                    # print "got here"
+                    # print("\r" + str(self.status_percentage) + "%",
+                    # print(data
+                    # print(lame.poll()
+                    # print("got here"
                 sleep(.01)
 
             t.join()
@@ -311,14 +315,14 @@ class AudioFactory(threading.Thread):
 
     def clear_all(self):
         with self.data_lock:
-            self._queue = Queue.Queue()
+            self._queue = queue.Queue()
             self._jobs = []
             self.status_part = 0
             self.status_total = 0
             self.status_percentage = 0
 
     def run(self):
-        # print "staring thread"
+        # print("staring thread"
         """
         For running as a thead only!
         :return:

@@ -1,9 +1,18 @@
 from collections import deque
 from platform import system
 from time import sleep
-from tkFileDialog import askdirectory, asksaveasfilename, askopenfilenames
-from tkMessageBox import showerror, askyesno, showinfo
 import sys
+
+if sys.version_info >= (3, 0):
+    from tkinter.filedialog import askdirectory, asksaveasfilename, askopenfilenames
+    from tkinter.messagebox import showerror, askyesno, showinfo
+    from tkinter import *
+    from tkinter import ttk
+else:
+    from tkFileDialog import askdirectory, asksaveasfilename, askopenfilenames
+    from tkMessageBox import showerror, askyesno, showinfo
+    from Tkinter import *
+    import ttk
 __title__ = 'CAVPP Audio Converter GUI'
 __author__ = 'California Audio Visual Preservation Project'
 __copyright__ = "California Audiovisual Preservation Project. 2015"
@@ -12,8 +21,8 @@ __version__ = '0.1.10'
 __license__ = 'GPL'
 DEBUG = False
 
-from Tkinter import *
-import ttk
+
+
 # sys.path.insert(0, os.path.abspath('..'))
 from audio_convert.scripts.modules.Audio_factory import AudioFactory
 import threading
@@ -184,18 +193,18 @@ class MainWindow(object):
                 self.propertyMenu.entryconfig(3, state=NORMAL)
         self.propertyMenu.post(event.x_root, event.y_root)
     def test(self):
-        print "JOBS"
+        print("JOBS")
         for job in self.mp3_engine.jobs:
-            print job
-        print "QUEUES"
+            print(job)
+        print("QUEUES")
         for queue in self.mp3_engine.preview_queues():
-            print queue
+            print(queue)
 
-        print "ENGINE STATUS"
-        print self.mp3_engine.current_status
-        print "tree_files"
+        print("ENGINE STATUS")
+        print(self.mp3_engine.current_status)
+        print("tree_files")
         for child in self.tree_files.get_children():
-            print child
+            print(child)
 
         print("pipe")
 
@@ -205,13 +214,13 @@ class MainWindow(object):
 
     def remove_file(self, item):
         self.mp3_engine.remove_audio_file(item[0])
-        print "removing " + item[0]
+        print("removing " + item[0])
         self.flush_tree()
 
     def change_output(self, item):
         new_name = asksaveasfilename()
         if new_name:
-            # print new_name
+            # print(new_name
             self.mp3_engine.change_output_name(item[0], new_name)
         self.flush_tree()
         pass
@@ -235,7 +244,7 @@ class MainWindow(object):
     def load_folder(self, new_folder):
         if new_folder:
             self.mp3_engine.clear_all()
-            # print "Adding folder: " + str(new_folder)
+            # print("Adding folder: " + str(new_folder)
             i = 0
             self.button_start.config(state=DISABLED)
             self.button_add_folder.config(state=DISABLED)
@@ -248,7 +257,7 @@ class MainWindow(object):
                     break
                 i += 1
                 if dir:
-                    # print dir[0]
+                    # print(dir[0]
                     folder = dir[0][:80]
                     self.set_status("Searching: " + folder)
 
@@ -256,13 +265,13 @@ class MainWindow(object):
                     if self.status == self.HALTING:
                         break
                     if ".wav" in file:
-                        # print "Adding \"" + path.join(root, file) + "\" to the queue."
+                        # print("Adding \"" + path.join(root, file) + "\" to the queue."
                         try:
                             found_new = True
                             path = os.path.join(root, file)
                             self.mp3_engine.add_audio_file(path)
                         except RuntimeError:
-                            # print "collision"
+                            # print("collision"
                             pass
                 if i % 100 == 0:
                     if found_new:
@@ -293,7 +302,7 @@ class MainWindow(object):
         self.flush_tree()
 
     def start_encoding(self):
-        # print "Starting encoding"
+        # print("Starting encoding"
         if self.status == self.IDLE:
             self.button_start.config(state=DISABLED)
             self.button_clear.config(state=DISABLED)
@@ -306,7 +315,7 @@ class MainWindow(object):
             # self.set_status("Working :"+ str(self.mp3_engine.status_percentage))
             self.status = self.WORKING
             self.button_stop.config(state=NORMAL)
-                # print "alive"
+                # print("alive"
 
         # self.mp3_engine.encode_next()
         self.update_progress()
@@ -410,7 +419,7 @@ class MainWindow(object):
             self.master.after(100, self.update_progress)
         else:
         # self.working_thread.join()
-        #     print self.mp3_engine.current_status
+        #     print(self.mp3_engine.current_status
             self.update_progress_data(self.mp3_engine.status_percentage,
                                       self.mp3_engine.status_part+1,
                                       self.mp3_engine.status_total)

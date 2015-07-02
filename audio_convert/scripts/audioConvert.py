@@ -21,15 +21,15 @@ line = "--------------------------------------------------"
 
 
 def openingBanner():
-    print"\n"
-    print "Audio converter script for CAVPP. \n" \
+    print("\n")
+    print("Audio converter script for CAVPP. \n" \
           "Dependencies: \n" \
           "Python 2.7 \n" \
           "OneSheet \n" \
           "ffmpeg \n" \
           "LAME \n" \
           "\n" \
-          "Programmed by Henry Borchers\n"
+          "Programmed by Henry Borchers\n")
 
 
 def main(input_argument):
@@ -41,12 +41,12 @@ def main(input_argument):
         for root, dir, files in walk(input_argument):
             for file in files:
                 if ".wav" in file:
-                    # print "Adding \"" + path.join(root, file) + "\" to the queue."
+                    # print("Adding \"" + path.join(root, file) + "\" to the queue."
                     derivative_maker.add_audio_file(os.path.join(root, file))
-                    # print "found one"
+                    # print("found one"
     elif os.path.isfile(input_argument):
             if ".wav" in input_argument:
-                print "Converting: " + os.path.join(input_argument)
+                print("Converting: " + os.path.join(input_argument))
                 derivative_maker.add_audio_file(input_argument)
             else:
                 # display_usage("This program only works with .wav files.")
@@ -57,9 +57,9 @@ def main(input_argument):
 
     # current_queue =         # display_usage("Missing directory or file")
     # for queue in derivative_maker.preview_queues():
-    #     print queue[0], queue[1]
+    #     print(queue[0], queue[1]
 
-    # print "\nencoding next\n"
+    # print("\nencoding next\n"
     while derivative_maker.hasTasks:
         derivative_maker.encode_next()
         # encode_next
@@ -67,7 +67,7 @@ def main(input_argument):
     # derivative_maker.start()
     # derivative_maker.join()
     for queue in derivative_maker.preview_queues():
-        print queue[0], queue[1]
+        print(queue[0], queue[1])
 
 
 
@@ -78,7 +78,7 @@ def installed_start():
     args = parser.parse_args()
     openingBanner()
     if args.gui:
-        print "Starting graphical user interface!"
+        print("Starting graphical user interface!")
         # sys.path.insert(0, os.path.abspath('..'))
         from gui.gui import startup
 
@@ -91,7 +91,7 @@ def installed_start():
         parser.print_help()
     else:
         main(args.input)
-        # print ars.input
+        # print(ars.input
 
 if __name__ == '__main__':
 

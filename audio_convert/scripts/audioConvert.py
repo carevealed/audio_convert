@@ -11,7 +11,7 @@ from os import walk
 import os
 import argparse
 # sys.path.insert(0, os.path.abspath('..'))
-from modules.Audio_factory import AudioFactory
+from audio_convert.scripts.modules.Audio_factory import AudioFactory
 
 
 line = "--------------------------------------------------"

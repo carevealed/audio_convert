@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='CAVPP_Audio_Convert',
-    version='0.1.11b2',
+    version='0.1.11b3',
     packages=find_packages(),
     url='https://github.com/cavpp/audio_convert',
     install_requires=['OneSheet >= 0.1.5'],

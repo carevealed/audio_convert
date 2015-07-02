@@ -80,7 +80,7 @@ def installed_start():
     if args.gui:
         print("Starting graphical user interface!")
         # sys.path.insert(0, os.path.abspath('..'))
-        from gui.gui import startup
+        from audio_convert.scripts.gui.gui import startup
 
         if args.input:
             startup(args.input)

@@ -3,6 +3,8 @@ from platform import system
 from time import sleep
 import sys
 
+
+
 if sys.version_info >= (3, 0):
     from tkinter.filedialog import askdirectory, asksaveasfilename, askopenfilenames
     from tkinter.messagebox import showerror, askyesno, showinfo
@@ -25,6 +27,7 @@ DEBUG = False
 
 # sys.path.insert(0, os.path.abspath('..'))
 from audio_convert.scripts.modules.Audio_factory import AudioFactory
+from audio_convert.scripts.gui.settings import SettingsWindow
 import threading
 import os
 
@@ -36,13 +39,14 @@ class MainWindow(object):
     WORKING = 1
     SEARCHING = 2
     HALTING = 3
-    def __init__(self, master, input_file=None):
+    def __init__(self, master, settings, input_file=None):
         self.master = master
         self.background = ttk.Frame(self.master, padding=(1,1))
         self.background.pack(fill=BOTH, expand=True)
         self.mp3_engine = AudioFactory(verbose=False)
         self.status = self.IDLE
         self.about_window = None
+        self.settingsFile = settings
 
 
 
@@ -52,13 +56,20 @@ class MainWindow(object):
         self.menu_bar = Menu(self.master)
         self.master.config(menu=self.menu_bar)
         self.fileMenu = Menu(self.menu_bar)
+        self.settingsMenu = Menu(self.menu_bar)
         self.helpMenu = Menu(self.menu_bar)
+
         self.menu_bar.add_cascade(menu=self.fileMenu, label="File")
+        self.menu_bar.add_cascade(menu=self.settingsMenu, label="Settings")
         self.menu_bar.add_cascade(menu=self.helpMenu, label="Help")
+
         self.fileMenu.add_command(label="Add File...", command=self.add_file)
         self.fileMenu.add_command(label="Open Folder", command=self.add_folder)
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label="Quit", command=self.quit)
+
+        self.settingsMenu.add_command(label="Change Program Settings...", command=self.load_settings)
+
         self.helpMenu.add_command(label="About", command=self.load_about_window)
 
 
@@ -369,6 +380,12 @@ class MainWindow(object):
         self.aboutRoot.resizable(FALSE,FALSE)
         self.about_window = AboutWindow(self.aboutRoot)
 
+    def load_settings(self):
+        settingsRoot = Toplevel(self.master)
+        settingsWindow = SettingsWindow(settingsRoot, self.settingsFile)
+        self.master.wait_window(settingsWindow.master)
+        print("Loading settings menu")
+
 
     def quit(self):
         if self.status == self.WORKING:
@@ -479,15 +496,15 @@ class AboutWindow():
 
 # class communicator(threading.Thread):
 #     def __init__(self):
-def startup(input_file = None):
+def startup(settings, input_file=None):
     root = Tk()
     root.wm_title(__title__)
     root.minsize(500, 500)
 
     if input_file:
-        app = MainWindow(root, input_file)
+        app = MainWindow(root, settings, input_file)
     else:
-        app = MainWindow(root)
+        app = MainWindow(root, settings)
     root.protocol("WM_DELETE_WINDOW", app.quit)
     root.mainloop()
 

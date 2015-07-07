@@ -12,6 +12,7 @@ import os
 import argparse
 # sys.path.insert(0, os.path.abspath('..'))
 from audio_convert.scripts.modules.Audio_factory import AudioFactory
+settings_file = None
 
 
 line = "--------------------------------------------------"
@@ -72,6 +73,10 @@ def main(input_argument):
 
 
 def installed_start():
+    settings_file = os.path.abspath(os.path.join("audio_convert","AudioConvertSettings.ini"))
+    if not os.path.exists(settings_file ):
+        raise IOError(settings_file + " not found")
+    print(settings_file)
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="File or folder name", nargs='?', default="", type=str)
     parser.add_argument("-g", "--gui", help="EXPERIMENTAL: Loads the graphical user interface.", action='store_true')
@@ -83,9 +88,9 @@ def installed_start():
         from audio_convert.scripts.gui.gui import startup
 
         if args.input:
-            startup(args.input)
+            startup(settings_file, args.input)
         else:
-            startup()
+            startup(settings_file)
 
     elif args.input == "":
         parser.print_help()

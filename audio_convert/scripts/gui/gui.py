@@ -28,6 +28,7 @@ DEBUG = False
 # sys.path.insert(0, os.path.abspath('..'))
 from audio_convert.scripts.modules.Audio_factory import AudioFactory
 from audio_convert.scripts.gui.settings import SettingsWindow
+from audio_convert.scripts.audioConvert import setup_lame
 import threading
 import os
 
@@ -43,10 +44,24 @@ class MainWindow(object):
         self.master = master
         self.background = ttk.Frame(self.master, padding=(1,1))
         self.background.pack(fill=BOTH, expand=True)
-        self.mp3_engine = AudioFactory(verbose=False)
+
+        self.settingsFile = settings
+        lame_location = None
+
+        while not lame_location:
+            try:
+                lame_location = setup_lame(self.settingsFile)
+                break
+            except FileNotFoundError:
+                fix_it = askyesno("Cannot find lame",
+                                  "Can't find lame mp3 encoder. Would you like to fix this in the settings?")
+                if fix_it:
+                    self.load_settings()
+                else:
+                    quit()
+        self.mp3_engine = AudioFactory(lame_location, verbose=False)
         self.status = self.IDLE
         self.about_window = None
-        self.settingsFile = settings
 
 
 
@@ -500,6 +515,8 @@ def startup(settings, input_file=None):
     root = Tk()
     root.wm_title(__title__)
     root.minsize(500, 500)
+
+
 
     if input_file:
         app = MainWindow(root, settings, input_file)

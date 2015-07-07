@@ -36,13 +36,14 @@ class AudioFactory(threading.Thread):
     ENCODING = 'Encoding'
     IDLE = 'Idle'
     HALTING = 'Halting'
-    def __init__(self, verbose=False):
+    def __init__(self, lame, verbose=False):
         """
 
         :param verbose: setting this to True makes LAME's progress data print(to the console.
         :return:
         """
         threading.Thread.__init__(self)
+        self.lame_location = lame
 
         self.verbose = verbose
         self._queue = queue.Queue()
@@ -261,7 +262,7 @@ class AudioFactory(threading.Thread):
             flags = flags + (("-b 320".split()))
 
         # flags = flags + (("-b 320".split()))
-        program = ['lame']
+        program = [self.lame_location]
         command = program
         command.append(source)
         command = command + flags

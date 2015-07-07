@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 __author__ = 'California Audio Visual Preservation Project'
 import sys
@@ -6,7 +7,7 @@ import sys
 
 if sys.version_info >= (3, 0):
     from tkinter.filedialog import askdirectory, asksaveasfilename, askopenfilenames
-    from tkinter.messagebox import showerror, askyesno, showinfo
+    from tkinter.messagebox import showerror, askyesno, showinfo, showwarning
     import configparser
     from tkinter import *
     from tkinter import ttk
@@ -16,6 +17,8 @@ else:
     import ConfigParser as configparser
     from Tkinter import *
     import ttk
+
+    from audio_convert.scripts.audioConvert import setup_lame
 
 # settingsFile = 'settings.ini'
 class SettingsWindow(object):
@@ -62,10 +65,18 @@ class SettingsWindow(object):
                 dataSec = section[0]
                 dataOpt = option[0].cget("text")
                 dataValue = option[1].get()
-                self.config.set(dataSec,dataOpt,dataValue)
-        with open(self.settingsFile, 'w', encoding='UTF-8') as configfile:
-            self.config.write(configfile)
-        self.master.destroy()
+                if dataSec == "EXTERNAL_PROGRAMS" and dataOpt == "lame_path":
+                    try:
+                        subprocess.check_call([dataValue, "--license"])
+                        self.config.set(dataSec,dataOpt,dataValue)
+                        with open(self.settingsFile, 'w', encoding='UTF-8') as configfile:
+                            self.config.write(configfile)
+                        self.master.destroy()
+                    except FileNotFoundError:
+                        showerror("Error", "Lame can not be located at " + dataValue)
+
+
+
     # def on_closing(self):
     #     self.master.destory()
 

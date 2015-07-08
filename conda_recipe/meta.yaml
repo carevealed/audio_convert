@@ -1,9 +1,9 @@
 package:
   name: cavpp_audio_convert
-  version: 0.1.12b1
+  version: 0.1.12
 
 source:
-  git_tag: 0.1.12b1
+  git_tag: 0.1.12
   git_url: https://github.com/cavpp/audio_convert.git
 
 build:

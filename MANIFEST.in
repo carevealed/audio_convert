@@ -1,1 +1,2 @@
 include audio_convert/scripts/gui/images/CAVPPcolor.gif
+include audio_convert/AudioConvertSettings.ini

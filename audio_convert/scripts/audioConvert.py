@@ -102,7 +102,8 @@ def setup_lame(settings_file):
 
 
 def installed_start():
-    settings_file = os.path.abspath(os.path.join("audio_convert","AudioConvertSettings.ini"))
+    # settings_file = os.path.abspath(os.path.join("audio_convert","AudioConvertSettings.ini"))
+    settings_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../AudioConvertSEttings.ini')
     global LAME_LOCATION
 
 

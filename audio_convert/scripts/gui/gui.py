@@ -477,7 +477,7 @@ class AboutWindow():
 # ----------------- Title
         self.titleFrame = ttk.Frame(self.background, width=20, padding=10, relief=RIDGE)
         self.titleFrame.pack()
-        print
+        # print
         self.logo = PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images/CAVPPcolor.gif'))
         self.titleLabel = ttk.Label(self.titleFrame, text=__title__, image=self.logo, compound=TOP)
         self.titleLabel.pack()

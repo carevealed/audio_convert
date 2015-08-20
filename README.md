@@ -11,21 +11,28 @@ To Install
 You have two options:
 
 
-Option 1: Standard
-------------------
 
-1. Open a terminal window and type:
+## Option 1: Install using Conda (recommended)
 
-        cd Downloads
-        git clone https://github.com/cavpp/audio_convert.git
-        cd audio_convert
-        sudo python setup.py install 
+
+If you are setting up Conda/Anaconda for the first time, please look at the readme document 
+[here](https://github.com/cavpp/conda_recipes/tree/master#setting-up-conda) first 
+
+1. In the launcher program, open a Python 3.4 environment or higher.
+2. Click on the install button for this script
+
+## Option 2: Install binary (Wheel)
+
+
+1. Download the latest version from the releases section of the project's Github page https://github.com/cavpp/PBCore/releases and copy the URL of the most current version.
+2. Open a terminal and type:
         
-2. Enter your computer password and the script will install along with all the dependencies.
+        sudo pip3 install #paste the URL here
+        
+            
 
+## Option 3: pip
 
-Option 2: pip
--------------
 
 1. Download the latest version in the dist folder to your Download folder
 2. In a terminal window, type:
@@ -40,12 +47,36 @@ Option 2: pip
  
         sudo easy_install pip
 
+## Option 4: source
+
+1. Open a terminal window and type:
+
+        cd Downloads
+        git clone https://github.com/cavpp/audio_convert.git
+        cd audio_convert
+        sudo python setup.py install 
+        
+2. Enter your computer password and the script will install along with all the dependencies.
 
 To Use
 ======
 
-To use with the command line:
------------------------------
+## Anaconda Launcher:
+
+Note: Only works with the Conda installation method. 
+
+1. In a terminal window type:
+
+   ```
+   launcher
+   ```
+  
+2. Click Environment and select the correct evironment. 
+3. Click on the launch button next to the script name
+
+
+## To use with the command line:
+
 In a terminal, simply type "makemp3" followed by a single file or directory.
 
 **Note:** This will save the mp3 files to the same folder location as the wav 

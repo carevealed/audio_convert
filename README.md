@@ -5,6 +5,11 @@ Description
 ===========
 Converts wav audio files to mp3 CAVPP standards.
 
+Documentation
+=============
+
+* [User Documenation](http://cavpp.github.io/audio_convert/)
+
 To Install
 ==========
 
